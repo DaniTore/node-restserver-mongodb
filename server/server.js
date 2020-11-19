@@ -1,48 +1,31 @@
 require('./config/config')
 
 const express = require('express');
+const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 const app = express();
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
-// conseguir datos
-app.get('/usuario', function(req, res) {
-    res.json('get usuario');
-});
+// Routas
+app.use(require('./routes/usuario'));
 
-// crear datos
-app.post('/usuario', function(req, res) {
-    let body = req.body;
-    if (req.body.nombre === undefined) {
-        res.status(400).json({
-            ok: false,
-            mensaje: "El nombre es necesario"
-        })
-    } else {
+const mongoDBUrl = 'mongodb://localhost:27017/cafe';
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 
-        res.json({ persona: body });
-    }
-});
-
-// Actualizar datos
-app.put('/usuario/:id', function(req, res) {
-    let id = req.params.id
-    res.json({
-        id
-    });
-});
-
-// delete
-app.delete('/usuario', function(req, res) {
-    res.json('delete usuario');
-});
-
+mongoose.connect(mongoDBUrl,
+    (err, res) => {
+        if (err) throw err;
+        console.log('--> Base de datos ONLINE');
+    })
 
 app.listen(process.env.PORT, () => {
     console.log('Escuchando el puerto: ', process.env.PORT);
