@@ -15,13 +15,19 @@ app.use(bodyParser.json());
 // Routas
 app.use(require('./routes/usuario'));
 
-const mongoDBUrl = 'mongodb://localhost:27017/cafe';
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-mongoose.set('useUnifiedTopology', true);
 
-mongoose.connect(mongoDBUrl,
+// mongoose.set('useNewUrlParser', true);
+// mongoose.set('useFindAndModify', false);
+// mongoose.set('useCreateIndex', true);
+// mongoose.set('useUnifiedTopology', true);
+
+const mongooseConfig = {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+}
+
+mongoose.connect(process.env.URLDB, mongooseConfig,
     (err, res) => {
         if (err) throw err;
         console.log('--> Base de datos ONLINE');

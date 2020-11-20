@@ -38,7 +38,8 @@ let usuarioSchema = new Schema({
     google: {
         type: Boolean,
         default: false
-    }
+    },
+    deleteAt: Number
 });
 
 usuarioSchema.methods.toJSON = function() {
