@@ -4,12 +4,12 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
-const { MongooseDocument } = require('mongoose');
+const { verificaToken, verificaAdminRol } = require('../middlewares/autentication');
 
 const app = express();
 
 // conseguir datos
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
 
         let usuarioActivo = {
             estado: true
@@ -50,7 +50,7 @@ app.get('/usuario', function(req, res) {
 );
 
 // crear datos
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdminRol], (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
@@ -77,7 +77,7 @@ app.post('/usuario', function(req, res) {
 });
 
 // Actualizar datos
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdminRol], (req, res) => {
     let id = req.params.id;
 
     // selecciona los valores dentro del body que se van a poder actualizar
@@ -102,7 +102,7 @@ app.put('/usuario/:id', function(req, res) {
 });
 
 // delete
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
 
@@ -116,7 +116,7 @@ app.delete('/usuario/:id', function(req, res) {
 
     Usuario.findByIdAndUpdate(id, borradoLogico, { new: true }, (err, usuarioBorrado) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err
             })
